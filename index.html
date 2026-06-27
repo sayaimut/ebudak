@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E-Budak | Kindergarten Baitul Taik</title>
+
+  <!-- PWA Meta Tags -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="E-Budak">
+  <meta name="application-name" content="E-Budak">
+  <meta name="theme-color" content="#1a3a6c">
+  <meta name="description" content="Sistem pengurusan murid Kindergarten Baitul Taik">
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Apple Touch Icons (untuk iPhone/iPad) -->
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<style>
+  /* ===================== RESET & BASE ===================== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue-dark:   #1a3a6c;
+    --blue:        #2563eb;
+    --blue-mid:    #3b82f6;
+    --blue-light:  #dbeafe;
+    --blue-pale:   #eff6ff;
+    --white:       #ffffff;
+    --gray-50:     #f8fafc;
+    --gray-100:    #f1f5f9;
+    --gray-200:    #e2e8f0;
+    --gray-400:    #94a3b8;
+    --gray-600:    #475569;
+    --gray-800:    #1e293b;
+    --green:       #16a34a;
+    --green-light: #dcfce7;
+    --red:         #dc2626;
+    --red-light:   #fee2e2;
+    --yellow:      #d97706;
+    --yellow-light:#fef3c7;
+    --radius:      14px;
+    --radius-sm:   8px;
+    --shadow:      0 2px 12px rgba(37,99,235,0.10);
+    --shadow-md:   0 4px 24px rgba(37,99,235,0.15);
+  }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-800);
+    min-height: 100vh;
+    font-size: 15px;
+  }
+  input, select, textarea, button { font-family: inherit; }
+  button { cursor: pointer; }
+  a { text-decoration: none; }
+
+  /* ===================== UTILITIES ===================== */
+  .hidden { display: none !important; }
+  .flex { display: flex; }
+  .flex-col { flex-direction: column; }
+  .items-center { align-items: center; }
+  .justify-center { justify-content: center; }
+  .justify-between { justify-content: space-between; }
+  .gap-2 { gap: 8px; }
+  .gap-3 { gap: 12px; }
+  .gap-4 { gap: 16px; }
+  .w-full { width: 100%; }
+  .text-center { text-align: center; }
+  .text-sm { font-size: 13px; }
+  .text-xs { font-size: 11px; }
+  .font-bold { font-weight: 700; }
+  .font-semibold { font-weight: 600; }
+  .mt-2 { margin-top: 8px; }
+  .mt-3 { margin-top: 12px; }
+  .mt-4 { margin-top: 16px; }
+  .mb-2 { margin-bottom: 8px; }
+  .mb-3 { margin-bottom: 12px; }
+  .p-4 { padding: 16px; }
+  .rounded { border-radius: var(--radius); }
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+  }
+
+  /* ===================== SCREENS ===================== */
+  .screen { display: none; min-height: 100vh; }
+  .screen.active { display: block; }
+
+  /* ===================== LOGIN SCREEN ===================== */
+  #screen-login {
+    background: linear-gradient(135deg, #1a3a6c 0%, #2563eb 60%, #60a5fa 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 100vh; padding: 24px;
+  }
+  #screen-login.active { display: flex; }
+  .login-card {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 36px 28px;
+    width: 100%; max-width: 380px;
+    box-shadow: 0 8px 40px rgba(26,58,108,0.25);
+    text-align: center;
+  }
+  .logo-circle {
+    width: 80px; height: 80px;
+    background: linear-gradient(135deg, var(--blue-dark), var(--blue-mid));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+    font-size: 32px;
+    box-shadow: 0 4px 16px rgba(37,99,235,0.3);
+  }
+  .login-title { font-size: 26px; font-weight: 800; color: var(--blue-dark); letter-spacing: -0.5px; }
+  .login-sub { font-size: 13px; color: var(--gray-600); margin-top: 4px; margin-bottom: 28px; }
+  .form-group { margin-bottom: 16px; text-align: left; }
+  .form-label { font-size: 13px; font-weight: 600; color: var(--gray-600); margin-bottom: 6px; display: block; }
+  .form-control {
+    width: 100%; padding: 12px 14px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    font-size: 15px; color: var(--gray-800);
+    background: var(--gray-50);
+    transition: border 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+  .form-control:focus { border-color: var(--blue-mid); box-shadow: 0 0 0 3px var(--blue-light); background: var(--white); }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px 24px; border-radius: var(--radius-sm);
+    font-size: 15px; font-weight: 600; border: none;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--blue-dark), var(--blue-mid));
+    color: var(--white);
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(37,99,235,0.4); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-secondary {
+    background: var(--blue-pale); color: var(--blue-dark);
+    border: 1.5px solid var(--blue-light);
+    width: 100%; margin-top: 12px;
+  }
+  .btn-secondary:hover { background: var(--blue-light); }
+  .btn-outline {
+    background: transparent; color: var(--blue-mid);
+    border: 1.5px solid var(--blue-mid);
+  }
+  .btn-outline:hover { background: var(--blue-pale); }
+  .btn-danger { background: var(--red); color: white; }
+  .btn-danger:hover { background: #b91c1c; }
+  .btn-success { background: var(--green); color: white; }
+  .btn-success:hover { background: #15803d; }
+  .btn-sm { padding: 7px 14px; font-size: 13px; }
+  .btn-xs { padding: 4px 10px; font-size: 12px; border-radius: 6px; }
+  .divider { height: 1px; background: var(--gray-200); margin: 20px 0; }
+  #error-login { color: var(--red); font-size: 13px; margin-top: -8px; margin-bottom: 8px; text-align: left; }
+
+  /* ===================== GURU LOGIN ===================== */
+  #screen-guru-login { background: linear-gradient(135deg, #1a3a6c, #2563eb, #60a5fa); display:flex; align-items:center; justify-content:center; min-height:100vh; padding:24px; }
+  #screen-guru-login.active { display: flex; }
+
+  /* ===================== PARENT PROFILE ===================== */
+  #screen-parent { background: var(--gray-50); min-height: 100vh; }
+  #screen-parent.active { display: block; }
+  .top-bar {
+    background: linear-gradient(135deg, var(--blue-dark), var(--blue-mid));
+    color: white; padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .top-bar-title { font-size: 17px; font-weight: 700; }
+  .top-bar-sub { font-size: 12px; opacity: 0.8; }
+  .back-btn { background: rgba(255,255,255,0.15); border: none; color: white; padding: 7px 12px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; display:flex;align-items:center;gap:5px; }
+  .back-btn:hover { background: rgba(255,255,255,0.25); }
+  .parent-content { padding: 20px; max-width: 480px; margin: 0 auto; }
+  .profile-card {
+    background: linear-gradient(135deg, var(--blue-dark), var(--blue-mid));
+    border-radius: 18px; padding: 24px; color: white;
+    box-shadow: 0 6px 24px rgba(37,99,235,0.3);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .profile-avatar {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center;
+    font-size: 28px; margin: 0 auto 12px; border: 2px solid rgba(255,255,255,0.3);
+  }
+  .profile-name { font-size: 20px; font-weight: 800; letter-spacing: -0.3px; }
+  .profile-kb { font-size: 13px; opacity: 0.8; margin-top: 3px; }
+  .profile-class { font-size: 13px; opacity: 0.7; margin-top: 2px; }
+  .profile-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px; }
+  .profile-stat { background: rgba(255,255,255,0.15); border-radius: 10px; padding: 10px 6px; }
+  .profile-stat-val { font-size: 18px; font-weight: 800; }
+  .profile-stat-lbl { font-size: 10px; opacity: 0.75; margin-top: 2px; line-height: 1.3; }
+  .quick-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .quick-card {
+    background: white; border-radius: var(--radius); padding: 20px 14px;
+    box-shadow: var(--shadow); cursor: pointer; text-align: center;
+    transition: all 0.2s; border: 2px solid transparent;
+  }
+  .quick-card:hover { border-color: var(--blue-mid); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+  .quick-card-icon { font-size: 28px; margin-bottom: 8px; }
+  .quick-card-label { font-size: 13px; font-weight: 600; color: var(--gray-600); }
+
+  /* ===================== DETAIL PANELS ===================== */
+  .detail-panel { padding: 20px; max-width: 480px; margin: 0 auto; }
+  .section-title { font-size: 16px; font-weight: 700; color: var(--blue-dark); margin-bottom: 14px; display:flex;align-items:center;gap:8px; }
+  .subject-row {
+    background: white; border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 10px;
+    display: flex; align-items: center; justify-content: space-between; box-shadow: var(--shadow);
+  }
+  .subject-name { font-weight: 600; font-size: 14px; color: var(--gray-800); }
+  .subject-badges { display:flex; gap:6px; align-items:center; }
+  .badge {
+    padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 700;
+  }
+  .badge-blue { background: var(--blue-light); color: var(--blue-dark); }
+  .badge-green { background: var(--green-light); color: var(--green); }
+  .badge-yellow { background: var(--yellow-light); color: var(--yellow); }
+  .badge-red { background: var(--red-light); color: var(--red); }
+  .badge-gray { background: var(--gray-100); color: var(--gray-600); }
+  .summary-card {
+    background: var(--blue-pale); border-radius: var(--radius); padding: 16px; margin-top: 12px;
+    border: 1px solid var(--blue-light);
+  }
+  .summary-row { display:flex; justify-content:space-between; align-items:center; padding: 5px 0; }
+  .summary-label { font-size: 13px; color: var(--gray-600); }
+  .summary-value { font-size: 14px; font-weight: 700; color: var(--blue-dark); }
+  .catatan-box { background: var(--yellow-light); border-radius: var(--radius-sm); padding: 12px 14px; margin-top: 12px; border-left: 3px solid var(--yellow); }
+  .catatan-box p { font-size: 13px; color: var(--gray-800); font-weight: 600; }
+
+  /* ===================== SAHSIAH ===================== */
+  .sahsiah-row { background: white; border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 10px; box-shadow: var(--shadow); }
+  .sahsiah-label { font-size: 13px; font-weight: 600; color: var(--gray-600); margin-bottom: 6px; }
+  .progress-bar { height: 8px; background: var(--gray-200); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 4px; transition: width 0.4s; }
+  .merit-demerit { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+  .merit-box { background: var(--green-light); border-radius: var(--radius-sm); padding: 14px; text-align:center; }
+  .demerit-box { background: var(--red-light); border-radius: var(--radius-sm); padding: 14px; text-align:center; }
+  .merit-val { font-size: 28px; font-weight: 800; }
+  .merit-lbl { font-size: 12px; font-weight: 600; }
+
+  /* ===================== CALENDAR ===================== */
+  .cal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom: 14px; }
+  .cal-month { font-size: 16px; font-weight: 700; color: var(--blue-dark); }
+  .cal-nav { background: var(--blue-pale); border: none; color: var(--blue-mid); width: 32px; height: 32px; border-radius: 50%; font-size: 16px; cursor:pointer; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; }
+  .cal-day-label { text-align:center; font-size: 11px; font-weight: 700; color: var(--gray-400); padding: 4px 0; }
+  .cal-cell {
+    aspect-ratio: 1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    border-radius: 8px; font-size: 12px; font-weight: 600; cursor:pointer; position:relative;
+    border: 1.5px solid transparent; transition: all 0.15s;
+  }
+  .cal-cell:hover { border-color: var(--blue-mid); }
+  .cal-cell.hadir { background: var(--green-light); color: var(--green); }
+  .cal-cell.tidak-hadir { background: var(--red-light); color: var(--red); }
+  .cal-cell.cuti { background: var(--yellow-light); color: var(--yellow); }
+  .cal-cell.empty { cursor: default; }
+  .cal-cell.empty:hover { border-color: transparent; }
+  .cal-cell .cal-dot { width: 5px; height: 5px; border-radius: 50%; margin-top: 2px; }
+  .cal-stat { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; margin-top: 14px; }
+  .cal-stat-box { background:white; border-radius: var(--radius-sm); padding: 12px; text-align:center; box-shadow: var(--shadow); }
+  .cal-stat-val { font-size: 22px; font-weight: 800; }
+  .cal-stat-lbl { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+  .legend { display:flex; gap:12px; flex-wrap:wrap; margin-bottom: 14px; }
+  .legend-item { display:flex; align-items:center; gap:5px; font-size: 12px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+  /* ===================== GURU LAYOUT ===================== */
+  #screen-guru { display: none; }
+  #screen-guru.active { display: flex; min-height: 100vh; }
+  .sidebar {
+    width: 240px; min-width: 240px;
+    background: linear-gradient(180deg, var(--blue-dark) 0%, #1e4080 100%);
+    padding: 0; display: flex; flex-direction: column;
+    position: fixed; top: 0; left: 0; height: 100vh; z-index: 100;
+    transform: translateX(-100%); transition: transform 0.3s;
+    overflow-y: auto;
+  }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar-logo { padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .sidebar-logo-icon { font-size: 28px; margin-bottom: 6px; }
+  .sidebar-logo-title { font-size: 18px; font-weight: 800; color: white; letter-spacing: -0.3px; }
+  .sidebar-logo-sub { font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+  .sidebar-nav { padding: 12px 10px; flex: 1; }
+  .nav-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px; border-radius: var(--radius-sm);
+    color: rgba(255,255,255,0.7); font-size: 14px; font-weight: 600;
+    cursor: pointer; margin-bottom: 4px; transition: all 0.2s;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.1); color: white; }
+  .nav-item.active { background: rgba(255,255,255,0.18); color: white; }
+  .nav-item-icon { font-size: 18px; width: 24px; text-align: center; }
+  .sidebar-footer { padding: 14px 10px; border-top: 1px solid rgba(255,255,255,0.1); }
+  .guru-main { flex: 1; margin-left: 0; }
+  .guru-topbar {
+    background: white; padding: 14px 20px; border-bottom: 1px solid var(--gray-200);
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 50; box-shadow: var(--shadow);
+  }
+  .hamburger { background: none; border: none; font-size: 22px; color: var(--blue-dark); cursor:pointer; padding: 4px; }
+  .guru-page-title { font-size: 16px; font-weight: 700; color: var(--blue-dark); }
+  .guru-content { padding: 20px; }
+  .page-section { display: none; }
+  .page-section.active { display: block; }
+
+  /* Overlay for sidebar */
+  .sidebar-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:99; }
+  .sidebar-overlay.active { display:block; }
+
+  /* ===================== DASHBOARD ===================== */
+  .stat-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-bottom: 20px; }
+  .stat-card { background: white; border-radius: var(--radius); padding: 18px 16px; box-shadow: var(--shadow); }
+  .stat-card-val { font-size: 28px; font-weight: 800; color: var(--blue-dark); }
+  .stat-card-lbl { font-size: 12px; color: var(--gray-400); margin-top: 4px; font-weight: 600; }
+  .stat-card-icon { font-size: 22px; margin-bottom: 8px; }
+  .notif-list { }
+  .notif-item { background: white; border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 8px; box-shadow: var(--shadow); display:flex; align-items:flex-start; gap: 10px; border-left: 3px solid var(--yellow); }
+  .notif-icon { font-size: 16px; margin-top: 1px; }
+  .notif-text { font-size: 13px; color: var(--gray-800); }
+
+  /* ===================== GURU FORMS ===================== */
+  .select-row { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .form-group-v { margin-bottom: 14px; }
+  .form-group-v label { display:block; font-size: 13px; font-weight: 600; color: var(--gray-600); margin-bottom: 6px; }
+  .form-group-v input, .form-group-v select {
+    width: 100%; padding: 10px 12px; border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm);
+    font-size: 14px; outline: none; background: var(--gray-50); transition: border 0.2s;
+  }
+  .form-group-v input:focus, .form-group-v select:focus { border-color: var(--blue-mid); background: white; }
+  .score-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-bottom: 16px; }
+
+  /* ===================== RANKING ===================== */
+  .tab-bar { display:flex; background: var(--gray-100); border-radius: var(--radius-sm); padding: 4px; margin-bottom: 16px; }
+  .tab-btn { flex:1; padding: 8px; border-radius: 6px; border:none; background:transparent; font-size: 13px; font-weight: 600; color: var(--gray-400); cursor:pointer; transition: all 0.2s; }
+  .tab-btn.active { background: white; color: var(--blue-dark); box-shadow: var(--shadow); }
+  .rank-table { width: 100%; border-collapse: collapse; }
+  .rank-table th { font-size: 12px; font-weight: 700; color: var(--gray-400); text-align:left; padding: 8px 12px; background: var(--gray-50); }
+  .rank-table td { padding: 10px 12px; border-bottom: 1px solid var(--gray-100); font-size: 14px; }
+  .rank-table tr:last-child td { border-bottom: none; }
+  .rank-num { width: 36px; height: 36px; border-radius: 50%; display:flex; align-items:center; justify-content:center; font-weight: 800; font-size: 13px; }
+  .rank-1 { background: #fef3c7; color: #d97706; }
+  .rank-2 { background: #f1f5f9; color: #64748b; }
+  .rank-3 { background: #fef3c7; color: #b45309; }
+  .rank-other { background: var(--blue-pale); color: var(--blue-mid); }
+
+  /* ===================== JADUAL ===================== */
+  .jadual-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .jadual-table th { background: var(--blue-dark); color: white; padding: 8px 6px; text-align:center; font-size: 11px; }
+  .jadual-table td { border: 1px solid var(--gray-200); padding: 8px 6px; text-align:center; font-size: 11px; min-width: 55px; cursor: pointer; vertical-align: middle; }
+  .jadual-table td:first-child { background: var(--blue-pale); font-weight: 700; font-size: 10px; color: var(--blue-dark); cursor: default; }
+  .jadual-table tr:nth-child(even) td { background: var(--gray-50); }
+  .jadual-table tr:nth-child(even) td:first-child { background: var(--blue-pale); }
+  .jadual-cell-edit { cursor: pointer; }
+
+  /* ===================== TETAPAN ===================== */
+  .tetapan-section { background: white; border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+  .tetapan-title { font-size: 15px; font-weight: 700; color: var(--blue-dark); margin-bottom: 14px; }
+
+  /* ===================== MODAL ===================== */
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:200; align-items:center; justify-content:center; padding: 20px; }
+  .modal-overlay.active { display:flex; }
+  .modal { background:white; border-radius: var(--radius); padding: 24px; width: 100%; max-width: 380px; box-shadow: var(--shadow-md); }
+  .modal-title { font-size: 16px; font-weight: 700; color: var(--blue-dark); margin-bottom: 16px; }
+  .modal-btns { display:flex; gap: 10px; margin-top: 20px; }
+  .modal-btns button { flex: 1; }
+
+  /* ===================== PRINT ===================== */
+  @media print {
+    body > *:not(#print-area) { display: none !important; }
+    #print-area { display: block !important; }
+  }
+  #print-area {
+    display: none;
+    font-family: 'Times New Roman', serif;
+    max-width: 210mm; margin: 0 auto; padding: 20mm;
+    font-size: 12pt; color: black;
+  }
+  .print-header { text-align: center; border-bottom: 3px double black; padding-bottom: 12pt; margin-bottom: 14pt; }
+  .print-logo { font-size: 28pt; font-weight: 900; letter-spacing: 2px; }
+  .print-school { font-size: 11pt; margin-top: 4pt; }
+  .print-title { font-size: 14pt; font-weight: 700; margin-top: 6pt; text-decoration: underline; }
+  .print-info { width: 100%; margin-bottom: 14pt; border-collapse: collapse; }
+  .print-info td { padding: 4pt 6pt; font-size: 11pt; }
+  .print-info td:first-child { font-weight: 700; width: 40%; }
+  .print-section { font-size: 12pt; font-weight: 700; background: #e0e0e0; padding: 4pt 6pt; margin-top: 10pt; margin-bottom: 4pt; }
+  .print-table { width:100%; border-collapse: collapse; font-size: 11pt; }
+  .print-table th { background: #333; color: white; padding: 5pt; text-align:left; }
+  .print-table td { padding: 4pt 5pt; border-bottom: 1px solid #ccc; }
+  .print-sign { margin-top: 30pt; display:flex; justify-content: flex-end; }
+  .print-sign-box { text-align:center; }
+  .print-sign-line { border-top: 1px solid black; width: 140pt; margin: 30pt auto 4pt; }
+  .print-footer { margin-top: 20pt; text-align: center; font-size: 9pt; color: #555; border-top: 1px solid #ccc; padding-top: 6pt; }
+
+  /* ===================== TOAST ===================== */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: var(--blue-dark); color: white; padding: 12px 20px;
+    border-radius: 30px; font-size: 13px; font-weight: 600; z-index: 999;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    animation: toastIn 0.3s ease; pointer-events: none;
+    white-space: nowrap;
+  }
+  @keyframes toastIn { from { opacity:0; transform: translateX(-50%) translateY(10px); } to { opacity:1; transform: translateX(-50%) translateY(0); } }
+
+  /* ===================== RESPONSIVE ===================== */
+  @media (min-width: 768px) {
+    .sidebar { transform: translateX(0); }
+    .guru-main { margin-left: 240px; }
+    .hamburger { display: none; }
+    .sidebar-overlay { display: none !important; }
+  }
+  @media (max-width: 400px) {
+    .stat-grid { grid-template-columns: 1fr 1fr; }
+    .select-row { grid-template-columns: 1fr; }
+    .score-grid { grid-template-columns: 1fr; }
+    .profile-stats { grid-template-columns: repeat(3,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== PRINT AREA ==================== -->
+<div id="print-area"></div>
+
+<!-- ==================== SCREEN: LOGIN ==================== -->
+<div id="screen-login" class="screen active">
+  <div class="login-card">
+    <div class="logo-circle">🎒</div>
+    <div class="login-title">E-Budak</div>
+    <div class="login-sub">Kindergarten Baitul Taik</div>
+    <div class="divider"></div>
+    <div class="form-group">
+      <label class="form-label">Kelas</label>
+      <select id="login-kelas" class="form-control">
+        <option value="">-- Pilih Kelas --</option>
+        <option value="Excellent Academy">Excellent Academy</option>
+        <option value="Brilliant Academy">Brilliant Academy</option>
+        <option value="Fabulous Academy">Fabulous Academy</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">No KB</label>
+      <input id="login-kb" class="form-control" type="text" placeholder="Contoh: KB26101">
+    </div>
+    <div id="error-login" class="hidden"></div>
+    <button class="btn btn-primary" onclick="parentLogin()">MASUK</button>
+    <div class="divider"></div>
+    <button class="btn btn-secondary" onclick="showGuruLogin()">🔐 E-GURU</button>
+  </div>
+</div>
+
+<!-- ==================== SCREEN: GURU LOGIN ==================== -->
+<div id="screen-guru-login" class="screen">
+  <div class="login-card">
+    <div class="logo-circle" style="background:linear-gradient(135deg,#15803d,#16a34a);">🔐</div>
+    <div class="login-title">Log Masuk Guru</div>
+    <div class="login-sub">Masukkan kata laluan untuk teruskan</div>
+    <div class="divider"></div>
+    <div class="form-group">
+      <label class="form-label">Kata Laluan</label>
+      <input id="guru-pw" class="form-control" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')guruLogin()">
+    </div>
+    <div id="error-guru" class="hidden" style="color:var(--red);font-size:13px;margin-top:-8px;margin-bottom:8px;"></div>
+    <button class="btn btn-primary" onclick="guruLogin()">LOG MASUK</button>
+    <button class="btn btn-secondary" onclick="showScreen('screen-login')">← Kembali</button>
+  </div>
+</div>
+
+<!-- ==================== SCREEN: PARENT ==================== -->
+<div id="screen-parent" class="screen">
+  <div class="top-bar">
+    <div>
+      <div class="top-bar-title">🎒 E-Budak</div>
+      <div class="top-bar-sub">Kindergarten Baitul Taik</div>
+    </div>
+    <button class="back-btn" onclick="parentLogout()">← Keluar</button>
+  </div>
+
+  <!-- Profile view -->
+  <div id="parent-profile-view">
+    <div class="parent-content">
+      <div class="profile-card" id="p-profile-card"></div>
+      <div class="quick-cards">
+        <div class="quick-card" onclick="showParentPage('akademik')">
+          <div class="quick-card-icon">📚</div>
+          <div class="quick-card-label">Akademik</div>
+        </div>
+        <div class="quick-card" onclick="showParentPage('sahsiah')">
+          <div class="quick-card-icon">🧠</div>
+          <div class="quick-card-label">Sahsiah</div>
+        </div>
+        <div class="quick-card" onclick="showParentPage('kehadiran')">
+          <div class="quick-card-icon">📅</div>
+          <div class="quick-card-label">Kehadiran</div>
+        </div>
+        <div class="quick-card" onclick="printReport()">
+          <div class="quick-card-icon">🖨</div>
+          <div class="quick-card-label">Cetak Laporan</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail view -->
+  <div id="parent-detail-view" class="hidden">
+    <div class="top-bar" id="parent-detail-bar" style="background:var(--blue-dark);">
+      <button class="back-btn" onclick="backToProfile()">← Profil</button>
+      <span id="parent-detail-title" style="font-weight:700;color:white;font-size:15px;"></span>
+    </div>
+    <div class="detail-panel">
+      <!-- Akademik -->
+      <div id="parent-akademik-view"></div>
+      <!-- Sahsiah -->
+      <div id="parent-sahsiah-view"></div>
+      <!-- Kehadiran -->
+      <div id="parent-kehadiran-view"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SCREEN: GURU ==================== -->
+<div id="screen-guru" class="screen">
+  <!-- Sidebar overlay for mobile -->
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">🎒</div>
+      <div class="sidebar-logo-title">E-Budak</div>
+      <div class="sidebar-logo-sub">Kindergarten Baitul Taik</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" data-page="dashboard" onclick="guruNav('dashboard')"><span class="nav-item-icon">📊</span> Dashboard</div>
+      <div class="nav-item" data-page="akademik" onclick="guruNav('akademik')"><span class="nav-item-icon">📚</span> Akademik</div>
+      <div class="nav-item" data-page="sahsiah" onclick="guruNav('sahsiah')"><span class="nav-item-icon">🧠</span> Sahsiah</div>
+      <div class="nav-item" data-page="kehadiran" onclick="guruNav('kehadiran')"><span class="nav-item-icon">📅</span> Kehadiran</div>
+      <div class="nav-item" data-page="jadual" onclick="guruNav('jadual')"><span class="nav-item-icon">🗓</span> Jadual Akademik</div>
+      <div class="nav-item" data-page="ranking" onclick="guruNav('ranking')"><span class="nav-item-icon">🏆</span> Ranking</div>
+      <div class="nav-item" data-page="tetapan" onclick="guruNav('tetapan')"><span class="nav-item-icon">⚙️</span> Tetapan</div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="nav-item" onclick="guruLogout()" style="color:#fca5a5;"><span class="nav-item-icon">🚪</span> Log Keluar</div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="guru-main">
+    <div class="guru-topbar">
+      <button class="hamburger" onclick="toggleSidebar()">☰</button>
+      <span class="guru-page-title" id="guru-page-title">Dashboard</span>
+      <span style="font-size:12px;color:var(--gray-400);">Guru</span>
+    </div>
+    <div class="guru-content">
+
+      <!-- DASHBOARD -->
+      <div class="page-section active" id="page-dashboard">
+        <div class="stat-grid" id="dash-stats"></div>
+        <div class="section-title">🔔 Notifikasi</div>
+        <div id="dash-notif"></div>
+      </div>
+
+      <!-- AKADEMIK -->
+      <div class="page-section" id="page-akademik">
+        <div class="select-row">
+          <div class="form-group-v">
+            <label>Kelas</label>
+            <select id="g-akad-kelas" onchange="loadGuruStudents('akad')">
+              <option value="">-- Pilih Kelas --</option>
+              <option value="Excellent Academy">Excellent Academy</option>
+              <option value="Brilliant Academy">Brilliant Academy</option>
+              <option value="Fabulous Academy">Fabulous Academy</option>
+            </select>
+          </div>
+          <div class="form-group-v">
+            <label>Murid</label>
+            <select id="g-akad-murid" onchange="loadAkadForm()">
+              <option value="">-- Pilih Murid --</option>
+            </select>
+          </div>
+        </div>
+        <div id="g-akad-form" class="hidden">
+          <div class="card">
+            <div class="section-title">📝 Markah Akademik</div>
+            <div class="score-grid" id="g-akad-inputs"></div>
+            <div class="form-group-v" style="margin-top:8px;">
+              <label>Catatan Guru</label>
+              <textarea id="g-akad-catatan" rows="2" style="width:100%;padding:10px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);font-size:14px;outline:none;resize:none;" placeholder="Catatan tambahan..."></textarea>
+            </div>
+            <button class="btn btn-primary mt-3" onclick="saveAkad()">💾 SIMPAN</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SAHSIAH -->
+      <div class="page-section" id="page-sahsiah">
+        <div class="select-row">
+          <div class="form-group-v">
+            <label>Kelas</label>
+            <select id="g-sah-kelas" onchange="loadGuruStudents('sah')">
+              <option value="">-- Pilih Kelas --</option>
+              <option value="Excellent Academy">Excellent Academy</option>
+              <option value="Brilliant Academy">Brilliant Academy</option>
+              <option value="Fabulous Academy">Fabulous Academy</option>
+            </select>
+          </div>
+          <div class="form-group-v">
+            <label>Murid</label>
+            <select id="g-sah-murid" onchange="loadSahsiahForm()">
+              <option value="">-- Pilih Murid --</option>
+            </select>
+          </div>
+        </div>
+        <div id="g-sah-form" class="hidden">
+          <div class="card">
+            <div class="section-title">🧠 Penilaian Sahsiah</div>
+            <div id="g-sah-inputs"></div>
+            <button class="btn btn-primary mt-3" onclick="saveSahsiah()">💾 SIMPAN</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- KEHADIRAN -->
+      <div class="page-section" id="page-kehadiran">
+        <div class="select-row">
+          <div class="form-group-v">
+            <label>Kelas</label>
+            <select id="g-had-kelas" onchange="loadGuruStudents('had')">
+              <option value="">-- Pilih Kelas --</option>
+              <option value="Excellent Academy">Excellent Academy</option>
+              <option value="Brilliant Academy">Brilliant Academy</option>
+              <option value="Fabulous Academy">Fabulous Academy</option>
+            </select>
+          </div>
+          <div class="form-group-v">
+            <label>Murid</label>
+            <select id="g-had-murid" onchange="loadKehadiranGuru()">
+              <option value="">-- Pilih Murid --</option>
+            </select>
+          </div>
+        </div>
+        <div id="g-had-cal" class="hidden">
+          <div class="card">
+            <div id="g-had-cal-inner"></div>
+          </div>
+          <div class="cal-stat mt-3" id="g-had-stats"></div>
+        </div>
+      </div>
+
+      <!-- JADUAL -->
+      <div class="page-section" id="page-jadual">
+        <div class="card">
+          <div class="section-title">🗓 Jadual Akademik Mingguan</div>
+          <div style="overflow-x:auto;">
+            <table class="jadual-table" id="jadual-table"></table>
+          </div>
+          <div class="mt-3" style="font-size:12px;color:var(--gray-400);">Klik pada sel untuk mengedit subjek.</div>
+        </div>
+      </div>
+
+      <!-- RANKING -->
+      <div class="page-section" id="page-ranking">
+        <div class="tab-bar">
+          <button class="tab-btn active" id="rank-tab-1" onclick="switchRankTab(1)">Keseluruhan</button>
+          <button class="tab-btn" id="rank-tab-2" onclick="switchRankTab(2)">Mengikut Kelas</button>
+        </div>
+        <div id="rank-keseluruhan">
+          <div class="card" style="overflow-x:auto;" id="rank-all-table"></div>
+        </div>
+        <div id="rank-kelas" class="hidden">
+          <div class="form-group-v mb-3">
+            <label>Pilih Kelas</label>
+            <select id="rank-kelas-sel" onchange="renderRankKelas()">
+              <option value="Excellent Academy">Excellent Academy</option>
+              <option value="Brilliant Academy">Brilliant Academy</option>
+              <option value="Fabulous Academy">Fabulous Academy</option>
+            </select>
+          </div>
+          <div class="card" style="overflow-x:auto;" id="rank-kelas-table"></div>
+        </div>
+      </div>
+
+      <!-- TETAPAN -->
+      <div class="page-section" id="page-tetapan">
+        <div class="tetapan-section">
+          <div class="tetapan-title">🔐 Kata Laluan Guru</div>
+          <div class="form-group-v">
+            <label>Kata Laluan Baharu</label>
+            <input type="password" id="tet-pw" class="form-control" placeholder="Masukkan kata laluan baharu">
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="savePw()">Simpan Kata Laluan</button>
+        </div>
+        <div class="tetapan-section">
+          <div class="tetapan-title">📆 Tahun Akademik</div>
+          <div class="form-group-v">
+            <label>Tahun</label>
+            <input type="number" id="tet-tahun" class="form-control" placeholder="2025">
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="saveTahun()">Simpan Tahun</button>
+        </div>
+        <div class="tetapan-section">
+          <div class="tetapan-title" style="color:var(--red);">⚠️ Zon Bahaya</div>
+          <button class="btn btn-danger btn-sm" onclick="confirmResetData()">Reset Semua Data</button>
+        </div>
+      </div>
+
+    </div><!-- end guru-content -->
+  </div><!-- end guru-main -->
+</div><!-- end screen-guru -->
+
+<!-- ==================== MODAL: JADUAL EDIT ==================== -->
+<div class="modal-overlay" id="modal-jadual">
+  <div class="modal">
+    <div class="modal-title">✏️ Edit Subjek</div>
+    <div class="form-group-v">
+      <label id="modal-jadual-label">Subjek</label>
+      <input type="text" id="modal-jadual-input" class="form-control" placeholder="Contoh: Bahasa Melayu">
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-outline" onclick="closeModal('modal-jadual')">Batal</button>
+      <button class="btn btn-primary" onclick="saveJadualCell()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL: KEHADIRAN STATUS ==================== -->
+<div class="modal-overlay" id="modal-hadir">
+  <div class="modal">
+    <div class="modal-title">📅 Tandakan Kehadiran</div>
+    <div id="modal-hadir-date" style="font-size:13px;color:var(--gray-600);margin-bottom:14px;"></div>
+    <div class="flex gap-2 flex-col">
+      <button class="btn btn-success" onclick="setHadir('H')">✅ Hadir</button>
+      <button class="btn btn-danger" onclick="setHadir('T')">❌ Tidak Hadir</button>
+      <button class="btn" style="background:var(--yellow-light);color:var(--yellow);" onclick="setHadir('C')">🌿 Cuti</button>
+      <button class="btn btn-outline" onclick="setHadir('')">🗑 Kosongkan</button>
+    </div>
+    <button class="btn btn-outline mt-3 w-full" onclick="closeModal('modal-hadir')">Batal</button>
+  </div>
+</div>
+
+<script>
+// =============================================
+// DATABASE MANAGEMENT
+// =============================================
+
+const DB_KEY = 'EBUDAK_DATABASE';
+
+function getDB() {
+  const raw = localStorage.getItem(DB_KEY);
+  if (!raw) return null;
+  try { return JSON.parse(raw); } catch(e) { return null; }
+}
+
+function saveDB(db) {
+  localStorage.setItem(DB_KEY, JSON.stringify(db));
+}
+
+// =============================================
+// INITIAL DATA SETUP
+// =============================================
+
+const KELAS_LIST = ['Excellent Academy', 'Brilliant Academy', 'Fabulous Academy'];
+
+const MURID_DATA = {
+  'Excellent Academy': [
+    {nama:'Pinky Ty', kb:'KB26101'},
+    {nama:'Balkish Boba Kasim', kb:'KB26102'},
+    {nama:'Unicorn Corn', kb:'KB26103'},
+    {nama:'Intan Matahari Matah', kb:'KB26104'},
+    {nama:'Hello Ty', kb:'KB26105'},
+    {nama:'Doraemon Emon', kb:'KB26106'},
+    {nama:'Dore Emon', kb:'KB26107'},
+    {nama:'Luluy Fizz', kb:'KB26108'},
+    {nama:'Zamira Nuri', kb:'KB26109'},
+    {nama:'Ayumi Belle', kb:'KB26110'},
+  ],
+  'Brilliant Academy': [
+    {nama:'Momo Twinkle', kb:'KB26201'},
+    {nama:'Fafa Lumin', kb:'KB26202'},
+    {nama:'Rania Glow', kb:'KB26203'},
+    {nama:'Zaki Star', kb:'KB26204'},
+    {nama:'Mimi Kiko', kb:'KB26205'},
+    {nama:'Lira Pebble', kb:'KB26206'},
+    {nama:'Nixie Lumi', kb:'KB26207'},
+    {nama:'Hana Yumi', kb:'KB26208'},
+    {nama:'Taro Bello', kb:'KB26209'},
+    {nama:'Suri Pompom', kb:'KB26210'},
+  ],
+  'Fabulous Academy': [
+    {nama:'Pipi Mocha', kb:'KB26301'},
+    {nama:'Kimi Bubbles', kb:'KB26302'},
+    {nama:'Luna Fizz', kb:'KB26303'},
+    {nama:'Riko Pop', kb:'KB26304'},
+    {nama:'Bella Nix', kb:'KB26305'},
+    {nama:'Dodo Piku', kb:'KB26306'},
+    {nama:'Nani Glitter', kb:'KB26307'},
+    {nama:'Fira Tutu', kb:'KB26308'},
+    {nama:'Zola Pika', kb:'KB26309'},
+    {nama:'Yumi Coco', kb:'KB26310'},
+  ]
+};
+
+const SUBJEK_LIST = ['Bahasa Melayu','Matematik','Sains','Kreativiti','Pembacaan'];
+const SAHSIAH_LIST = ['Disiplin','Kerjasama','Kebersihan'];
+
+const DEFAULT_JADUAL = {
+  slots: [
+    '7:30 - 8:00','8:00 - 8:30','8:30 - 9:00','9:00 - 9:30',
+    '9:30 - 10:00','10:00 - 10:30','10:30 - 11:00','11:30 - 12:00'
+  ],
+  hari: ['Isnin','Selasa','Rabu','Khamis','Jumaat'],
+  cells: {}
+};
+
+function initDB() {
+  let db = getDB();
+  if (!db) {
+    db = {
+      tetapan: { password: 'guru123', tahun: new Date().getFullYear() },
+      murid: {},
+      jadual: JSON.parse(JSON.stringify(DEFAULT_JADUAL))
+    };
+    // Populate murid
+    Object.entries(MURID_DATA).forEach(([kelas, list]) => {
+      list.forEach(m => {
+        db.murid[m.kb] = {
+          nama: m.nama, kb: m.kb, kelas: kelas,
+          akademik: {}, sahsiah: {}, kehadiran: {}, catatan: ''
+        };
+      });
+    });
+    saveDB(db);
+  }
+  return db;
+}
+
+// =============================================
+// CALCULATION ENGINE (Single Source of Truth)
+// =============================================
+
+function getPointer(markah) {
+  if (markah >= 90) return 4.0;
+  if (markah >= 80) return 3.7;
+  if (markah >= 75) return 3.5;
+  if (markah >= 70) return 3.3;
+  if (markah >= 65) return 3.0;
+  if (markah >= 60) return 2.7;
+  if (markah >= 55) return 2.5;
+  if (markah >= 50) return 2.3;
+  if (markah >= 45) return 2.0;
+  if (markah >= 40) return 1.7;
+  if (markah >= 35) return 1.5;
+  if (markah >= 30) return 1.3;
+  return 1.0;
+}
+
+function getGred(markah) {
+  if (markah >= 90) return 'A+';
+  if (markah >= 80) return 'A';
+  if (markah >= 75) return 'A-';
+  if (markah >= 70) return 'B+';
+  if (markah >= 65) return 'B';
+  if (markah >= 60) return 'B-';
+  if (markah >= 55) return 'C+';
+  if (markah >= 50) return 'C';
+  if (markah >= 45) return 'C-';
+  if (markah >= 40) return 'D+';
+  if (markah >= 35) return 'D';
+  if (markah >= 30) return 'D-';
+  return 'E';
+}
+
+function calcCGPA(akademik) {
+  const vals = SUBJEK_LIST.map(s => akademik[s]).filter(v => v !== undefined && v !== null && v !== '');
+  if (vals.length === 0) return null;
+  const total = vals.reduce((a, m) => a + getPointer(Number(m)), 0);
+  return parseFloat((total / vals.length).toFixed(3));
+}
+
+function calcAvgMarkah(akademik) {
+  const vals = SUBJEK_LIST.map(s => akademik[s]).filter(v => v !== undefined && v !== null && v !== '');
+  if (vals.length === 0) return null;
+  return parseFloat((vals.reduce((a, v) => a + Number(v), 0) / vals.length).toFixed(2));
+}
+
+function getCGPACategory(cgpa) {
+  if (cgpa === null) return '';
+  if (cgpa >= 3.5) return 'Penghormatan Pengetua';
+  if (cgpa >= 3.0) return 'Akademik Baik';
+  return 'Bawah Purata';
+}
+
+function calcKehadiran(kehadiran) {
+  let hadir = 0, tidakHadir = 0, cuti = 0;
+  Object.values(kehadiran).forEach(v => {
+    if (v === 'H') hadir++;
+    else if (v === 'T') tidakHadir++;
+    else if (v === 'C') cuti++;
+  });
+  const jumlah = hadir + tidakHadir;
+  const peratus = jumlah > 0 ? parseFloat(((hadir / jumlah) * 100).toFixed(1)) : 0;
+  return { hadir, tidakHadir, cuti, jumlah, peratus };
+}
+
+function calcRanking(db) {
+  // Returns sorted array with rank for all murid
+  const list = Object.values(db.murid).map(m => {
+    const cgpa = calcCGPA(m.akademik);
+    const avg = calcAvgMarkah(m.akademik);
+    return { kb: m.kb, nama: m.nama, kelas: m.kelas, cgpa, avg };
+  });
+  list.sort((a, b) => {
+    if (b.cgpa === null && a.cgpa === null) return 0;
+    if (b.cgpa === null) return -1;
+    if (a.cgpa === null) return 1;
+    if (b.cgpa !== a.cgpa) return b.cgpa - a.cgpa;
+    return (b.avg || 0) - (a.avg || 0);
+  });
+  list.forEach((m, i) => { m.rank = i + 1; });
+  return list;
+}
+
+function getMuridRank(kb, db) {
+  const all = calcRanking(db);
+  const entry = all.find(m => m.kb === kb);
+  return entry ? entry.rank : '-';
+}
+
+function getMuridClassRank(kb, db) {
+  const m = db.murid[kb];
+  if (!m) return '-';
+  const list = calcRanking(db).filter(x => x.kelas === m.kelas);
+  const entry = list.find(x => x.kb === kb);
+  if (!entry) return '-';
+  // Rerank within class
+  let rank = 1;
+  for (const x of list) {
+    if (x.kb === kb) break;
+    rank++;
+  }
+  return rank;
+}
+
+// =============================================
+// SCREEN NAVIGATION
+// =============================================
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// =============================================
+// LOGIN
+// =============================================
+
+function parentLogin() {
+  const kelas = document.getElementById('login-kelas').value.trim();
+  const kb = document.getElementById('login-kb').value.trim().toUpperCase();
+  const errEl = document.getElementById('error-login');
+
+  if (!kelas || !kb) {
+    errEl.textContent = 'Sila isi kelas dan No KB.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+
+  const db = initDB();
+  const murid = db.murid[kb];
+
+  if (!murid || murid.kelas !== kelas) {
+    errEl.textContent = 'No KB atau kelas tidak ditemui.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+
+  errEl.classList.add('hidden');
+  renderParentProfile(murid, db);
+  showScreen('screen-parent');
+}
+
+function parentLogout() {
+  document.getElementById('login-kelas').value = '';
+  document.getElementById('login-kb').value = '';
+  showScreen('screen-login');
+}
+
+function showGuruLogin() {
+  document.getElementById('guru-pw').value = '';
+  document.getElementById('error-guru').classList.add('hidden');
+  showScreen('screen-guru-login');
+}
+
+function guruLogin() {
+  const pw = document.getElementById('guru-pw').value;
+  const db = initDB();
+  if (pw === db.tetapan.password) {
+    document.getElementById('error-guru').classList.add('hidden');
+    showScreen('screen-guru');
+    guruNav('dashboard');
+  } else {
+    const e = document.getElementById('error-guru');
+    e.textContent = 'Kata laluan salah.';
+    e.classList.remove('hidden');
+  }
+}
+
+function guruLogout() {
+  showScreen('screen-login');
+}
+
+// =============================================
+// PARENT MODE
+// =============================================
+
+let currentParentKB = null;
+let parentCalYear = new Date().getFullYear();
+let parentCalMonth = new Date().getMonth();
+
+function renderParentProfile(murid, db) {
+  currentParentKB = murid.kb;
+  const cgpa = calcCGPA(murid.akademik);
+  const keh = calcKehadiran(murid.kehadiran);
+  const rankAll = getMuridRank(murid.kb, db);
+  const rankKelas = getMuridClassRank(murid.kb, db);
+
+  const cgpaStr = cgpa !== null ? cgpa.toFixed(3) : '-';
+
+  document.getElementById('p-profile-card').innerHTML = `
+    <div class="profile-avatar">👦</div>
+    <div class="profile-name">${murid.nama}</div>
+    <div class="profile-kb">${murid.kb}</div>
+    <div class="profile-class">${murid.kelas}</div>
+    <div class="profile-stats">
+      <div class="profile-stat">
+        <div class="profile-stat-val">${cgpaStr}</div>
+        <div class="profile-stat-lbl">CGPA</div>
+      </div>
+      <div class="profile-stat">
+        <div class="profile-stat-val">#${rankKelas}</div>
+        <div class="profile-stat-lbl">Kedudukan Kelas</div>
+      </div>
+      <div class="profile-stat">
+        <div class="profile-stat-val">${keh.peratus}%</div>
+        <div class="profile-stat-lbl">Kehadiran</div>
+      </div>
+    </div>
+    <div style="margin-top:10px;font-size:11px;opacity:0.7;">Kedudukan Keseluruhan: #${rankAll}</div>
+  `;
+
+  document.getElementById('parent-profile-view').classList.remove('hidden');
+  document.getElementById('parent-detail-view').classList.add('hidden');
+}
+
+function showParentPage(page) {
+  const db = getDB();
+  const murid = db.murid[currentParentKB];
+  document.getElementById('parent-profile-view').classList.add('hidden');
+  document.getElementById('parent-detail-view').classList.remove('hidden');
+
+  document.getElementById('parent-akademik-view').innerHTML = '';
+  document.getElementById('parent-sahsiah-view').innerHTML = '';
+  document.getElementById('parent-kehadiran-view').innerHTML = '';
+
+  const titles = { akademik: '📚 Akademik', sahsiah: '🧠 Sahsiah', kehadiran: '📅 Kehadiran' };
+  document.getElementById('parent-detail-title').textContent = titles[page] || '';
+
+  if (page === 'akademik') renderParentAkademik(murid);
+  if (page === 'sahsiah') renderParentSahsiah(murid);
+  if (page === 'kehadiran') renderParentKehadiran(murid);
+}
+
+function backToProfile() {
+  const db = getDB();
+  renderParentProfile(db.murid[currentParentKB], db);
+}
+
+function renderParentAkademik(murid) {
+  const cgpa = calcCGPA(murid.akademik);
+  const avg = calcAvgMarkah(murid.akademik);
+  const cat = getCGPACategory(cgpa);
+
+  let html = '<div class="section-title">📚 Markah Akademik</div>';
+  SUBJEK_LIST.forEach(s => {
+    const m = murid.akademik[s];
+    const hasM = m !== undefined && m !== null && m !== '';
+    const markah = hasM ? Number(m) : null;
+    const gred = hasM ? getGred(markah) : '-';
+    const pointer = hasM ? getPointer(markah).toFixed(1) : '-';
+    const badgeColor = hasM ? (markah >= 70 ? 'badge-green' : markah >= 50 ? 'badge-yellow' : 'badge-red') : 'badge-gray';
+    html += `<div class="subject-row">
+      <div class="subject-name">${s}</div>
+      <div class="subject-badges">
+        <span class="badge badge-blue">${hasM ? markah : '-'}</span>
+        <span class="badge ${badgeColor}">${gred}</span>
+        <span class="badge badge-gray">${pointer}</span>
+      </div>
+    </div>`;
+  });
+
+  html += `<div class="summary-card">
+    <div class="summary-row"><span class="summary-label">Purata Markah</span><span class="summary-value">${avg !== null ? avg : '-'}</span></div>
+    <div class="summary-row"><span class="summary-label">CGPA</span><span class="summary-value">${cgpa !== null ? cgpa.toFixed(3) : '-'}</span></div>
+  </div>`;
+
+  if (cat) {
+    const catColor = cat === 'Penghormatan Pengetua' ? 'badge-green' : cat === 'Akademik Baik' ? 'badge-yellow' : 'badge-red';
+    html += `<div class="catatan-box mt-3"><p>🏅 Tahap: <span class="badge ${catColor}">${cat}</span></p></div>`;
+  }
+
+  if (murid.catatan) {
+    html += `<div class="catatan-box mt-3" style="background:var(--blue-pale);border-left-color:var(--blue-mid);"><p>📝 Catatan Guru: ${murid.catatan}</p></div>`;
+  }
+
+  document.getElementById('parent-akademik-view').innerHTML = html;
+}
+
+function renderParentSahsiah(murid) {
+  const sah = murid.sahsiah || {};
+  let html = '<div class="section-title">🧠 Penilaian Sahsiah</div>';
+
+  const items = SAHSIAH_LIST;
+  let totalVal = 0; let count = 0;
+  items.forEach(s => {
+    const v = sah[s];
+    const hasV = v !== undefined && v !== null && v !== '';
+    const val = hasV ? Number(v) : 0;
+    if (hasV) { totalVal += val; count++; }
+    const pct = hasV ? Math.min(100, (val / 100) * 100) : 0;
+    const barColor = val >= 70 ? '#16a34a' : val >= 50 ? '#d97706' : '#dc2626';
+    html += `<div class="sahsiah-row">
+      <div class="sahsiah-label">${s}: <b>${hasV ? val : '-'}/100</b></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${barColor};"></div></div>
+    </div>`;
+  });
+
+  const avg = count > 0 ? (totalVal / count).toFixed(1) : '-';
+  html += `<div class="summary-card">
+    <div class="summary-row"><span class="summary-label">Purata Sahsiah</span><span class="summary-value">${avg}/100</span></div>
+  </div>`;
+
+  const merit = sah.merit || 0;
+  const demerit = sah.demerit || 0;
+  html += `<div class="merit-demerit">
+    <div class="merit-box"><div class="merit-val" style="color:var(--green);">${merit}</div><div class="merit-lbl" style="color:var(--green);">Merit</div></div>
+    <div class="demerit-box"><div class="merit-val" style="color:var(--red);">${demerit}</div><div class="merit-lbl" style="color:var(--red);">Demerit</div></div>
+  </div>`;
+
+  document.getElementById('parent-sahsiah-view').innerHTML = html;
+}
+
+function renderParentKehadiran(murid) {
+  const keh = murid.kehadiran || {};
+  document.getElementById('parent-kehadiran-view').innerHTML = `
+    <div id="p-cal-wrap"></div>
+  `;
+  renderParentCal(keh, false);
+}
+
+function renderParentCal(keh, isGuru, targetId='p-cal-wrap') {
+  const year = parentCalYear; const month = parentCalMonth;
+  const monthNames = ['Januari','Februari','Mac','April','Mei','Jun','Julai','Ogos','September','Oktober','November','Disember'];
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDay = new Date(year, month, 1).getDay();
+
+  let html = `<div class="cal-header">
+    <button class="cal-nav" onclick="parentCalNav(-1,'${targetId}','${isGuru}')">‹</button>
+    <div class="cal-month">${monthNames[month]} ${year}</div>
+    <button class="cal-nav" onclick="parentCalNav(1,'${targetId}','${isGuru}')">›</button>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green-light);border:1px solid var(--green);"></div>Hadir</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--red-light);border:1px solid var(--red);"></div>Tidak Hadir</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--yellow-light);border:1px solid var(--yellow);"></div>Cuti</div>
+  </div>
+  <div class="cal-grid">
+    <div class="cal-day-label">Ahd</div><div class="cal-day-label">Isn</div><div class="cal-day-label">Sel</div>
+    <div class="cal-day-label">Rab</div><div class="cal-day-label">Kha</div><div class="cal-day-label">Jum</div><div class="cal-day-label">Sab</div>`;
+
+  for (let i = 0; i < firstDay; i++) html += `<div class="cal-cell empty"></div>`;
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const key = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const status = keh[key] || '';
+    const cls = status === 'H' ? 'hadir' : status === 'T' ? 'tidak-hadir' : status === 'C' ? 'cuti' : '';
+    const icon = status === 'H' ? '✓' : status === 'T' ? '✗' : status === 'C' ? '~' : '';
+    const clickAttr = isGuru ? `onclick="openHadirModal('${key}')"` : '';
+    html += `<div class="cal-cell ${cls}" ${clickAttr}>${d}<span style="font-size:8px;">${icon}</span></div>`;
+  }
+  html += '</div>';
+
+  const stats = calcKehadiran(keh);
+  html += `<div class="cal-stat mt-3">
+    <div class="cal-stat-box"><div class="cal-stat-val" style="color:var(--green);">${stats.hadir}</div><div class="cal-stat-lbl">Hadir</div></div>
+    <div class="cal-stat-box"><div class="cal-stat-val" style="color:var(--red);">${stats.tidakHadir}</div><div class="cal-stat-lbl">Tidak Hadir</div></div>
+    <div class="cal-stat-box"><div class="cal-stat-val" style="color:var(--yellow);">${stats.cuti}</div><div class="cal-stat-lbl">Cuti</div></div>
+    <div class="cal-stat-box"><div class="cal-stat-val" style="color:var(--blue-mid);">${stats.peratus}%</div><div class="cal-stat-lbl">Peratus</div></div>
+  </div>`;
+
+  document.getElementById(targetId).innerHTML = html;
+}
+
+function parentCalNav(dir, targetId, isGuru) {
+  parentCalMonth += dir;
+  if (parentCalMonth < 0) { parentCalMonth = 11; parentCalYear--; }
+  if (parentCalMonth > 11) { parentCalMonth = 0; parentCalYear++; }
+  if (isGuru === 'true') {
+    const db = getDB();
+    renderParentCal(db.murid[guruHadKB].kehadiran || {}, true, targetId);
+  } else {
+    const db = getDB();
+    renderParentCal(db.murid[currentParentKB].kehadiran || {}, false, targetId);
+  }
+}
+
+// =============================================
+// PRINT REPORT
+// =============================================
+
+function printReport() {
+  const db = getDB();
+  const murid = db.murid[currentParentKB];
+  const cgpa = calcCGPA(murid.akademik);
+  const avg = calcAvgMarkah(murid.akademik);
+  const cat = getCGPACategory(cgpa);
+  const keh = calcKehadiran(murid.kehadiran);
+  const rankAll = getMuridRank(murid.kb, db);
+  const rankKelas = getMuridClassRank(murid.kb, db);
+
+  let subjekRows = SUBJEK_LIST.map(s => {
+    const m = murid.akademik[s];
+    const hasM = m !== undefined && m !== null && m !== '';
+    return `<tr>
+      <td>${s}</td>
+      <td>${hasM ? Number(m) : '-'}</td>
+      <td>${hasM ? getGred(Number(m)) : '-'}</td>
+      <td>${hasM ? getPointer(Number(m)).toFixed(1) : '-'}</td>
+    </tr>`;
+  }).join('');
+
+  const area = document.getElementById('print-area');
+  area.innerHTML = `
+    <div class="print-header">
+      <div class="print-logo">🎒 E-BUDAK</div>
+      <div class="print-school">Kindergarten Baitul Taik</div>
+      <div class="print-title">SLIP KEPUTUSAN MURID</div>
+    </div>
+    <table class="print-info">
+      <tr><td>Nama</td><td>: ${murid.nama}</td></tr>
+      <tr><td>No KB</td><td>: ${murid.kb}</td></tr>
+      <tr><td>Kelas</td><td>: ${murid.kelas}</td></tr>
+      <tr><td>Tahun</td><td>: ${db.tetapan.tahun}</td></tr>
+    </table>
+    <div class="print-section">AKADEMIK</div>
+    <table class="print-table">
+      <tr><th>Subjek</th><th>Markah</th><th>Gred</th><th>Pointer</th></tr>
+      ${subjekRows}
+    </table>
+    <table class="print-info" style="margin-top:10pt;">
+      <tr><td>Purata Markah</td><td>: ${avg !== null ? avg : '-'}</td></tr>
+      <tr><td>CGPA</td><td>: ${cgpa !== null ? cgpa.toFixed(3) : '-'}</td></tr>
+      <tr><td>Tahap</td><td>: ${cat || '-'}</td></tr>
+      <tr><td>Kedudukan Kelas</td><td>: #${rankKelas}</td></tr>
+      <tr><td>Kedudukan Keseluruhan</td><td>: #${rankAll}</td></tr>
+    </table>
+    <div class="print-section">KEHADIRAN</div>
+    <table class="print-info">
+      <tr><td>Jumlah Hadir</td><td>: ${keh.hadir} hari</td></tr>
+      <tr><td>Jumlah Tidak Hadir</td><td>: ${keh.tidakHadir} hari</td></tr>
+      <tr><td>Jumlah Cuti</td><td>: ${keh.cuti} hari</td></tr>
+      <tr><td>Peratus Kehadiran</td><td>: ${keh.peratus}%</td></tr>
+    </table>
+    ${murid.catatan ? `<div class="print-section">CATATAN GURU</div><p style="font-size:11pt;padding:6pt;">${murid.catatan}</p>` : ''}
+    <div class="print-sign">
+      <div class="print-sign-box">
+        <div class="print-sign-line"></div>
+        <div style="font-size:10pt;">Tandatangan Guru Kelas</div>
+      </div>
+    </div>
+    <div class="print-footer">E-Budak System | Kindergarten Baitul Taik | ${db.tetapan.tahun}</div>
+  `;
+
+  window.print();
+}
+
+// =============================================
+// GURU: SIDEBAR & NAV
+// =============================================
+
+const PAGE_TITLES = {
+  dashboard: 'Dashboard',
+  akademik: 'Akademik',
+  sahsiah: 'Sahsiah',
+  kehadiran: 'Kehadiran',
+  jadual: 'Jadual Akademik',
+  ranking: 'Ranking',
+  tetapan: 'Tetapan'
+};
+
+function guruNav(page) {
+  document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelector(`[data-page="${page}"]`).classList.add('active');
+  document.getElementById('guru-page-title').textContent = PAGE_TITLES[page] || page;
+  closeSidebar();
+
+  if (page === 'dashboard') renderDashboard();
+  if (page === 'jadual') renderJadual();
+  if (page === 'ranking') { renderRankAll(); }
+  if (page === 'tetapan') {
+    const db = getDB();
+    document.getElementById('tet-tahun').value = db.tetapan.tahun;
+  }
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebar-overlay').classList.toggle('active');
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('active');
+}
+
+// =============================================
+// DASHBOARD
+// =============================================
+
+function renderDashboard() {
+  const db = getDB();
+  const muridList = Object.values(db.murid);
+  const total = muridList.length;
+
+  const cgpaList = muridList.map(m => calcCGPA(m.akademik)).filter(v => v !== null);
+  const avgCGPA = cgpaList.length > 0 ? (cgpaList.reduce((a,b)=>a+b,0)/cgpaList.length).toFixed(3) : '-';
+  const penghormatan = muridList.filter(m => { const c=calcCGPA(m.akademik); return c!==null && c>=3.5; }).length;
+  const akademikBaik = muridList.filter(m => { const c=calcCGPA(m.akademik); return c!==null && c>=3.0 && c<3.5; }).length;
+  const bawahPurata = muridList.filter(m => { const c=calcCGPA(m.akademik); return c!==null && c<3.0; }).length;
+  const tiada = muridList.filter(m => calcCGPA(m.akademik) === null).length;
+  const bawah80 = muridList.filter(m => { const k=calcKehadiran(m.kehadiran); return k.jumlah>0 && k.peratus<80; }).length;
+  const demerit5 = muridList.filter(m => (m.sahsiah.demerit||0) > 5).length;
+
+  const stats = [
+    { icon:'👦', val: total, lbl:'Jumlah Murid' },
+    { icon:'📊', val: avgCGPA, lbl:'Purata CGPA' },
+    { icon:'🏅', val: penghormatan, lbl:'Penghormatan Pengetua' },
+    { icon:'📚', val: akademikBaik, lbl:'Akademik Baik' },
+    { icon:'⚠️', val: bawahPurata, lbl:'Bawah Purata' },
+    { icon:'📅', val: muridList.length, lbl:'Rekod Murid' },
+  ];
+
+  document.getElementById('dash-stats').innerHTML = stats.map(s =>
+    `<div class="stat-card">
+      <div class="stat-card-icon">${s.icon}</div>
+      <div class="stat-card-val">${s.val}</div>
+      <div class="stat-card-lbl">${s.lbl}</div>
+    </div>`
+  ).join('');
+
+  const notifs = [];
+  if (tiada > 0) notifs.push({ icon: '📝', text: `${tiada} murid belum mempunyai markah akademik.` });
+  if (bawah80 > 0) notifs.push({ icon: '📅', text: `${bawah80} murid mempunyai kehadiran bawah 80%.` });
+  if (demerit5 > 0) notifs.push({ icon: '⚠️', text: `${demerit5} murid mempunyai lebih daripada 5 demerit.` });
+  if (notifs.length === 0) notifs.push({ icon: '✅', text: 'Tiada notifikasi baharu.' });
+
+  document.getElementById('dash-notif').innerHTML = notifs.map(n =>
+    `<div class="notif-item"><span class="notif-icon">${n.icon}</span><span class="notif-text">${n.text}</span></div>`
+  ).join('');
+}
+
+// =============================================
+// GURU: LOAD STUDENTS FOR SELECTS
+// =============================================
+
+function loadGuruStudents(mode) {
+  const selectors = { akad:'g-akad-kelas', sah:'g-sah-kelas', had:'g-had-kelas' };
+  const targetSelectors = { akad:'g-akad-murid', sah:'g-sah-murid', had:'g-had-murid' };
+  const kelas = document.getElementById(selectors[mode]).value;
+  const muridSel = document.getElementById(targetSelectors[mode]);
+  muridSel.innerHTML = '<option value="">-- Pilih Murid --</option>';
+
+  if (!kelas) return;
+  const db = getDB();
+  Object.values(db.murid).filter(m => m.kelas === kelas).forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m.kb; opt.textContent = `${m.nama} (${m.kb})`;
+    muridSel.appendChild(opt);
+  });
+
+  if (mode === 'akad') { document.getElementById('g-akad-form').classList.add('hidden'); }
+  if (mode === 'sah') { document.getElementById('g-sah-form').classList.add('hidden'); }
+  if (mode === 'had') { document.getElementById('g-had-cal').classList.add('hidden'); }
+}
+
+// =============================================
+// GURU: AKADEMIK
+// =============================================
+
+function loadAkadForm() {
+  const kb = document.getElementById('g-akad-murid').value;
+  if (!kb) { document.getElementById('g-akad-form').classList.add('hidden'); return; }
+  const db = getDB();
+  const murid = db.murid[kb];
+  document.getElementById('g-akad-form').classList.remove('hidden');
+
+  let html = '';
+  SUBJEK_LIST.forEach(s => {
+    const val = murid.akademik[s] !== undefined ? murid.akademik[s] : '';
+    html += `<div class="form-group-v">
+      <label>${s}</label>
+      <input type="number" id="akad-${s.replace(/ /g,'_')}" min="0" max="100" value="${val}" placeholder="0-100">
+    </div>`;
+  });
+  document.getElementById('g-akad-inputs').innerHTML = html;
+  document.getElementById('g-akad-catatan').value = murid.catatan || '';
+}
+
+function saveAkad() {
+  const kb = document.getElementById('g-akad-murid').value;
+  if (!kb) return;
+  const db = getDB();
+  SUBJEK_LIST.forEach(s => {
+    const el = document.getElementById('akad-' + s.replace(/ /g,'_'));
+    const v = el ? el.value.trim() : '';
+    if (v !== '') {
+      const n = Math.min(100, Math.max(0, Number(v)));
+      db.murid[kb].akademik[s] = n;
+    } else {
+      delete db.murid[kb].akademik[s];
+    }
+  });
+  db.murid[kb].catatan = document.getElementById('g-akad-catatan').value;
+  saveDB(db);
+  showToast('✅ Markah disimpan!');
+}
+
+// =============================================
+// GURU: SAHSIAH
+// =============================================
+
+function loadSahsiahForm() {
+  const kb = document.getElementById('g-sah-murid').value;
+  if (!kb) { document.getElementById('g-sah-form').classList.add('hidden'); return; }
+  const db = getDB();
+  const murid = db.murid[kb];
+  document.getElementById('g-sah-form').classList.remove('hidden');
+
+  let html = '<div class="score-grid">';
+  SAHSIAH_LIST.forEach(s => {
+    const val = murid.sahsiah[s] !== undefined ? murid.sahsiah[s] : '';
+    html += `<div class="form-group-v">
+      <label>${s} (0-100)</label>
+      <input type="number" id="sah-${s}" min="0" max="100" value="${val}" placeholder="0-100">
+    </div>`;
+  });
+  html += '</div>';
+  html += `<div class="score-grid">
+    <div class="form-group-v">
+      <label>Merit</label>
+      <input type="number" id="sah-merit" min="0" value="${murid.sahsiah.merit||0}" placeholder="0">
+    </div>
+    <div class="form-group-v">
+      <label>Demerit</label>
+      <input type="number" id="sah-demerit" min="0" value="${murid.sahsiah.demerit||0}" placeholder="0">
+    </div>
+  </div>`;
+  document.getElementById('g-sah-inputs').innerHTML = html;
+}
+
+function saveSahsiah() {
+  const kb = document.getElementById('g-sah-murid').value;
+  if (!kb) return;
+  const db = getDB();
+  SAHSIAH_LIST.forEach(s => {
+    const el = document.getElementById('sah-' + s);
+    if (el) db.murid[kb].sahsiah[s] = Math.min(100, Math.max(0, Number(el.value) || 0));
+  });
+  db.murid[kb].sahsiah.merit = Number(document.getElementById('sah-merit').value) || 0;
+  db.murid[kb].sahsiah.demerit = Number(document.getElementById('sah-demerit').value) || 0;
+  saveDB(db);
+  showToast('✅ Sahsiah disimpan!');
+}
+
+// =============================================
+// GURU: KEHADIRAN
+// =============================================
+
+let guruHadKB = null;
+let hadirModalKey = null;
+
+function loadKehadiranGuru() {
+  const kb = document.getElementById('g-had-murid').value;
+  guruHadKB = kb;
+  if (!kb) { document.getElementById('g-had-cal').classList.add('hidden'); return; }
+  document.getElementById('g-had-cal').classList.remove('hidden');
+  const db = getDB();
+  renderParentCal(db.murid[kb].kehadiran || {}, true, 'g-had-cal-inner');
+}
+
+function openHadirModal(key) {
+  hadirModalKey = key;
+  const d = new Date(key);
+  document.getElementById('modal-hadir-date').textContent = d.toLocaleDateString('ms-MY', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  openModal('modal-hadir');
+}
+
+function setHadir(status) {
+  if (!guruHadKB || !hadirModalKey) return;
+  const db = getDB();
+  if (status === '') {
+    delete db.murid[guruHadKB].kehadiran[hadirModalKey];
+  } else {
+    db.murid[guruHadKB].kehadiran[hadirModalKey] = status;
+  }
+  saveDB(db);
+  closeModal('modal-hadir');
+  renderParentCal(db.murid[guruHadKB].kehadiran || {}, true, 'g-had-cal-inner');
+  showToast('✅ Kehadiran dikemaskini!');
+}
+
+// =============================================
+// JADUAL AKADEMIK
+// =============================================
+
+let jadualEditSlot = null; let jadualEditHari = null;
+
+function renderJadual() {
+  const db = getDB();
+  const jadual = db.jadual;
+  const slots = jadual.slots;
+  const hari = jadual.hari;
+
+  let html = '<thead><tr><th>Masa</th>';
+  hari.forEach(h => { html += `<th>${h}</th>`; });
+  html += '</tr></thead><tbody>';
+
+  slots.forEach(slot => {
+    html += `<tr><td>${slot}</td>`;
+    hari.forEach(h => {
+      const key = `${slot}__${h}`;
+      const val = (jadual.cells && jadual.cells[key]) || '';
+      html += `<td class="jadual-cell-edit" onclick="openJadualModal('${slot}','${h}')">${val || '<span style="color:var(--gray-400);font-size:10px;">-</span>'}</td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody>';
+  document.getElementById('jadual-table').innerHTML = html;
+}
+
+function openJadualModal(slot, hari) {
+  jadualEditSlot = slot; jadualEditHari = hari;
+  const db = getDB();
+  const key = `${slot}__${hari}`;
+  document.getElementById('modal-jadual-label').textContent = `${slot} — ${hari}`;
+  document.getElementById('modal-jadual-input').value = (db.jadual.cells && db.jadual.cells[key]) || '';
+  openModal('modal-jadual');
+}
+
+function saveJadualCell() {
+  const db = getDB();
+  const key = `${jadualEditSlot}__${jadualEditHari}`;
+  if (!db.jadual.cells) db.jadual.cells = {};
+  db.jadual.cells[key] = document.getElementById('modal-jadual-input').value.trim();
+  saveDB(db);
+  closeModal('modal-jadual');
+  renderJadual();
+  showToast('✅ Jadual dikemaskini!');
+}
+
+// =============================================
+// RANKING
+// =============================================
+
+function switchRankTab(tab) {
+  if (tab === 1) {
+    document.getElementById('rank-keseluruhan').classList.remove('hidden');
+    document.getElementById('rank-kelas').classList.add('hidden');
+    document.getElementById('rank-tab-1').classList.add('active');
+    document.getElementById('rank-tab-2').classList.remove('active');
+    renderRankAll();
+  } else {
+    document.getElementById('rank-keseluruhan').classList.add('hidden');
+    document.getElementById('rank-kelas').classList.remove('hidden');
+    document.getElementById('rank-tab-1').classList.remove('active');
+    document.getElementById('rank-tab-2').classList.add('active');
+    renderRankKelas();
+  }
+}
+
+function renderRankAll() {
+  const db = getDB();
+  const ranked = calcRanking(db);
+  document.getElementById('rank-all-table').innerHTML = buildRankTable(ranked);
+}
+
+function renderRankKelas() {
+  const kelas = document.getElementById('rank-kelas-sel').value;
+  const db = getDB();
+  const all = calcRanking(db).filter(m => m.kelas === kelas);
+  // Re-rank within class
+  all.forEach((m, i) => { m.rank = i + 1; });
+  document.getElementById('rank-kelas-table').innerHTML = buildRankTable(all);
+}
+
+function buildRankTable(ranked) {
+  if (ranked.length === 0) return '<p style="color:var(--gray-400);padding:16px;text-align:center;">Tiada data.</p>';
+  let html = `<table class="rank-table">
+    <thead><tr><th>#</th><th>Nama</th><th>Kelas</th><th>CGPA</th></tr></thead><tbody>`;
+  ranked.forEach(m => {
+    const rankCls = m.rank===1?'rank-1':m.rank===2?'rank-2':m.rank===3?'rank-3':'rank-other';
+    const cgpaStr = m.cgpa !== null ? m.cgpa.toFixed(3) : '-';
+    const cat = getCGPACategory(m.cgpa);
+    const catBadge = cat ? `<span class="badge ${cat==='Penghormatan Pengetua'?'badge-green':cat==='Akademik Baik'?'badge-yellow':'badge-red'}" style="font-size:10px;">${cat}</span>` : '';
+    html += `<tr>
+      <td><div class="rank-num ${rankCls}">${m.rank}</div></td>
+      <td><b>${m.nama}</b><br><span class="text-xs" style="color:var(--gray-400);">${m.kb}</span></td>
+      <td style="font-size:12px;color:var(--gray-600);">${m.kelas}</td>
+      <td><b>${cgpaStr}</b><br>${catBadge}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  return html;
+}
+
+// =============================================
+// TETAPAN
+// =============================================
+
+function savePw() {
+  const pw = document.getElementById('tet-pw').value.trim();
+  if (!pw) { showToast('⚠️ Kata laluan tidak boleh kosong!'); return; }
+  const db = getDB();
+  db.tetapan.password = pw;
+  saveDB(db);
+  document.getElementById('tet-pw').value = '';
+  showToast('✅ Kata laluan disimpan!');
+}
+
+function saveTahun() {
+  const t = document.getElementById('tet-tahun').value.trim();
+  if (!t) { showToast('⚠️ Sila masukkan tahun!'); return; }
+  const db = getDB();
+  db.tetapan.tahun = t;
+  saveDB(db);
+  showToast('✅ Tahun akademik disimpan!');
+}
+
+function confirmResetData() {
+  if (confirm('⚠️ Adakah anda pasti mahu reset SEMUA data? Tindakan ini tidak boleh dibatalkan!')) {
+    localStorage.removeItem(DB_KEY);
+    initDB();
+    showToast('✅ Data telah direset.');
+  }
+}
+
+// =============================================
+// MODAL HELPERS
+// =============================================
+
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+// =============================================
+// TOAST
+// =============================================
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast'; t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
+
+// =============================================
+// INIT
+// =============================================
+
+initDB();
+
+// =============================================
+// PWA: DAFTAR SERVICE WORKER
+// =============================================
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/ebudak/sw.js')
+      .then(reg => console.log('[E-Budak] Service Worker berjaya didaftar:', reg.scope))
+      .catch(err => console.log('[E-Budak] Service Worker gagal:', err));
+  });
+}
+</script>
+</body>
+</html>
